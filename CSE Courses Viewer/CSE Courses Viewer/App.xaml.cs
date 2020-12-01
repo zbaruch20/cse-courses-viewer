@@ -9,8 +9,6 @@ namespace CSE_Courses_Viewer
         public App()
         {
             InitializeComponent();
-
-            MainPage = new MainPage();
         }
 
         protected override void OnStart()
