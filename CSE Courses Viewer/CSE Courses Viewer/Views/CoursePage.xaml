@@ -1,12 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="CSE Courses Viewer"
              x:Class="CSE_Courses_Viewer.CoursePage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+    <StackLayout>
+        <!-- Labels -->
+        <Label Text="CSE Courses Viewer"
+               FontAttributes="Bold"
+               FontSize="Title"
+               HorizontalOptions="CenterAndExpand"
+               Margin="0, 10, 0, 0"/>
+        <Label Text="Enter a CSE course number, and click the button to view course information."
+               HorizontalOptions="CenterAndExpand"
+               Margin="3"/>
+
+        <!-- Text box and button is one 'row' -->
+        <Grid ColumnDefinitions="*, *">
+            <Entry Placeholder="Course Number"
+                   Grid.Column="0"/>
+            <Button Text="Search"
+                    Grid.Column="1"/>
+        </Grid>
+        <!-- Course info and syllabus is another 'row' -->
+        <ScrollView VerticalOptions="FillAndExpand">
+            <Grid ColumnDefinitions="*, *">
+                <Editor IsReadOnly="True"
+                        Text="CSE xxxx: [Course Title]
+                        
+                        Prerquisites (see syllabus for exact combinations):
+                        
+                        This class is a prerequisite for:">
+                </Editor>
+                <WebView Source="http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/CSE-2221.pdf"/>
+            </Grid>
+        </ScrollView>
+    </StackLayout>
 </ContentPage>
