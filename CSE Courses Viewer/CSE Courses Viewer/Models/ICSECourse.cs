@@ -31,9 +31,19 @@ namespace CSE_Courses_Viewer
         IList<int> Prereqs { get; set; }
 
         /**
-         * Course number of courses that this is a prerequisite to.
+         * String containing the course prerequisites.
+         */
+        string PrereqStr { get; }
+
+        /**
+         * Course numbers of courses that this is a prerequisite to.
          */
         IList<int> Successors { get; set; }
+
+        /**
+         * String containing the course successors.
+         */
+        string SuccessorStr { get; }
         #endregion
 
         /**

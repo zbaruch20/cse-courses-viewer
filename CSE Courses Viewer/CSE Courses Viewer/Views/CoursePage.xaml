@@ -7,7 +7,7 @@
         <!-- Labels -->
         <Label Text="CSE Courses Viewer"
                FontAttributes="Bold"
-               FontSize="Title"
+               FontSize="{Binding Source={x:Reference fontSizeSlider}, Path=Value}"
                HorizontalOptions="CenterAndExpand"
                Margin="0, 10"/>
         <Label Text="Enter a CSE course number, and click the button to view course information."
@@ -35,8 +35,28 @@
                HorizontalOptions="Center"/>
         <Label Text="{Binding SelectedCourse.Name}"
                FontAttributes="Italic"
+               HorizontalOptions="Center"
+               Padding="0, 0, 0, 15"/>
+        <Label Text="{Binding SelectedCourse.Syllabus, StringFormat='Link to Course Syllabus: {0}'}"
                HorizontalOptions="Center"/>
-        <Label Text="{Binding SelectedCourse.Syllabus}"
+        <Label Text="{Binding SelectedCourse.PrereqStr,
+                      StringFormat='Prerequisites and corequisites (see syllabus for exact combinations): {0}'}"
                HorizontalOptions="Center"/>
+        <Label Text="{Binding SelectedCourse.SuccessorStr,
+                      StringFormat='This course is a prerequisite for: {0}'}"
+               HorizontalOptions="Center"
+               Padding="0, 0, 0, 15"/>
+        
+        <!-- Random image because I have to -->
+        <Image Source="https://images.daznservices.com/di/library/sporting_news/25/8b/chris-baldwin-tim-worley-083116-yt-ftr_11luu88ws0z721jk7bjhat314g.jpg"
+               HorizontalOptions="CenterAndExpand"
+               HeightRequest="420"/>
+        
+        <!-- Slider because I have to -->
+        <Slider Maximum="72"
+                Minimum="24"
+                Value="48"
+                x:Name="fontSizeSlider">
+        </Slider>
     </StackLayout>
 </ContentPage>

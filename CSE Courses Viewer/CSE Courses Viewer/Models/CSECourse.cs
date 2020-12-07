@@ -33,9 +33,41 @@ namespace CSE_Courses_Viewer
         public IList<int> Prereqs { get; set; }
 
         /**
+         * String containing the course prerequisites.
+         */
+        public string PrereqStr { get
+            {
+                if (Prereqs.Count == 0) return "None";
+
+                string s = string.Format("CSE {0}", Prereqs[0].ToString());
+                for (int i = 1; i < Prereqs.Count; i++)
+                {
+                    s += string.Format(", CSE {0}", Prereqs[i]);
+                }
+                return s;
+            }
+        }
+
+        /**
          * Course number of courses that this is a prerequisite to.
          */
         public IList<int> Successors { get; set; }
+
+        /**
+         * String containing the course successors.
+         */
+        public string SuccessorStr { get
+            {
+                if (Successors.Count == 0) return "N/A";
+
+                string s = string.Format("CSE {0}", Successors[0].ToString());
+                for (int i = 1; i < Successors.Count; i++)
+                {
+                    s += string.Format(", CSE {0}", Successors[i]);
+                }
+                return s;
+            }
+        }
 
         #endregion
 

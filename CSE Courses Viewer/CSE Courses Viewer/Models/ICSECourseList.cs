@@ -8,6 +8,11 @@
     public interface ICSECourseList
     {
         /**
+         * Returns the length of this.
+         */
+        int Count { get; }
+
+        /**
          * Returns the CSECourse in this whose course number is
          * number. Note that this course is aliased, to allow for
          * editing. If such course is not present, an
@@ -47,5 +52,14 @@
          * @return true if a couse with number is in this, false otherwise
          */
         bool ContainsNumber(int number);
+
+        /**
+         * Returns the course at position index.
+         * 
+         * @oaram index the index of the course to retrieve
+         * @return the course at position index
+         * @throws ArgumentOutOfRangeException if index is out of range
+         */
+        ICSECourse At(int index);
     }
 }

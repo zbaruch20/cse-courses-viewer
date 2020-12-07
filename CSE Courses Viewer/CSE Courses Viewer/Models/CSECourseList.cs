@@ -103,6 +103,17 @@ namespace CSE_Courses_Viewer
             CourseList.Remove(removedCourse);
             return removedCourse;
         }
+
+        public ICSECourse At(int index)
+        {
+            if (index < 0 || index > CourseList.Count)
+            {
+                throw new ArgumentOutOfRangeException("Violation of: 0 <= index <= |this|");
+            }
+
+            var courses = new List<ICSECourse>(CourseList);
+            return courses[index];
+        }
         #endregion
 
         #region IEnumerable Implementation
