@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using HtmlAgilityPack;
+using Fizzler.Systems.HtmlAgilityPack;
 
 namespace CSE_Courses_Viewer
 {
@@ -14,49 +16,77 @@ namespace CSE_Courses_Viewer
      */
     public static class CSECourseData
     {
+        /**
+         * The CourseList containing the main course data, and will be data bound to the ViewModel.
+         */
         public static ICSECourseList CourseList { get; private set; }
-        static CSECourseData()
+
+        /**
+         * The base URI of the courses page. Each syllabus link should be an extension to this URI.
+         */
+        private static string BaseUri = @"http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/";
+
+        /**
+         * Parses prereqStr and returns a list of the CSE prerequisite courses. The returned list
+         * contains each 4-digit course number that isn't succeeded by 'Math', 'ECE', 'Engr', or 'Stat'.
+         * 
+         * @param prereqStr the string containing the detailed description of prerequisites to be parsed
+         * @return a list of the parsed CSE prerequisite courses
+         */
+        private static IList<int> ParsePrereqs(string prereqStr)
+        {
+            // TODO - Implement this
+            return new List<int>();
+        }
+
+        /**
+         * Parses courseTags and loads CourseList with each CSE course in courseTags.
+         * For each course tag, the first child node should contain the course number with a
+         * link to the syllabus, the third child node should contain the name of the course,
+         * and the fifth child node should contain course prerequisites.
+         * Any course whose number is not 'standard' (i.e. honors courses or courses with an extension)
+         * will not be added to the CourseList.
+         * 
+         * @param courseTags tr tags containing information for each CSE course
+         */
+        private static void LoadCourses(IEnumerable<HtmlNode> courseTags)
         {
             CourseList = new CSECourseList();
-
-            // Software 1
-            CourseList.AddCourse(new CSECourse
+            foreach (HtmlNode row in courseTags)
             {
-                Number = 2221,
-                Name = "Software I: Software Components",
-                Syllabus = "http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/CSE-2221.pdf",
-                Successors = new List<int>(new int[] { 2231, 2321 })
-            });
+                // Check that course number is valid
+                if (int.TryParse(row.ChildNodes[1].InnerText, out int number))
+                {
+                    string name = row.ChildNodes[5].InnerText;
+                    string syllabus = BaseUri + row.ChildNodes[1].FirstChild.GetAttributeValue("href", "");
 
-            // Software 2
-            CourseList.AddCourse(new CSECourse
-            {
-                Number = 2231,
-                Name = "Software II: Software Development and Design",
-                Syllabus = "http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/CSE-2231.pdf",
-                Prereqs = new List<int>(new int[] { 2221, 2321 }),
-                Successors = new List<int>(new int[] { 2321, 4253 })
-            });
+                    CourseList.AddCourse(new CSECourse()
+                    {
+                        Number = number,
+                        Name = name,
+                        Syllabus = syllabus,
+                        Prereqs = ParsePrereqs(row.ChildNodes[9].InnerText)
+                    });
+                }
+            }
+        }
 
-            // Foundations 1
-            CourseList.AddCourse(new CSECourse
-            {
-                Number = 2321,
-                Name = "Foundations I: Discrete Structures",
-                Syllabus = "http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/CSE-2321.pdf",
-                Prereqs = new List<int>(new int[] { 2221, 2231 }),
-                Successors = new List<int>(new int[] { 4253 })
-            });
+        /**
+         * Scrapes data from http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/ and
+         * returns the tr tags containing the information for each CSE course.
+         * 
+         * @return IEnumerable of HTML tr tags containing the information for each CSE course
+         */
+        private static IEnumerable<HtmlNode> ScrapeCourses()
+        {
+            HtmlDocument doc = (new HtmlWeb()).Load(BaseUri);
+            return doc.DocumentNode.QuerySelectorAll("table.data_table tr[class^=\"tr_data\"]");
+        }
 
-            // C#
-            CourseList.AddCourse(new CSECourse
-            {
-                Number = 4253,
-                Name = "Programming in C#",
-                Syllabus = "http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/CSE-4253.pdf",
-                Prereqs = new List<int>(new int[] { 2231, 2321 })
-            });
-
+        static CSECourseData()
+        {
+            IEnumerable<HtmlNode> courseTags = ScrapeCourses();
+            LoadCourses(courseTags);
         }
     }
 }
