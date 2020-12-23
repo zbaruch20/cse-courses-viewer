@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using HtmlAgilityPack;
 using Fizzler.Systems.HtmlAgilityPack;
+using System.Linq;
 
 namespace CSE_Courses_Viewer
 {
@@ -27,16 +28,62 @@ namespace CSE_Courses_Viewer
         private static string BaseUri = @"http://coe-portal.cse.ohio-state.edu/pdf-exports/CSE/";
 
         /**
+         * Recursively descent parses tokens and adds the proper prerequisites to prereqs.
+         * 
+         * @param tokens the tokens from the loaded preprequisites string from the webpage
+         * @param prereqs the parsed list of prerequisite courses
+         */
+        private static void ParsePrereqs(Queue<string> tokens, IList<int> prereqs)
+        {
+            if (tokens.Count > 0)
+            {
+                string frontToken = tokens.Dequeue();
+                switch (frontToken)
+                {
+                    case "ece":
+                    case "engr":
+                    case "ise":
+                    case "math":
+                    case "phil":
+                    case "stat":
+                        // Keep dequeueing until we get 'CSE' or 'concur'
+                        while (tokens.Count > 0 && !tokens.Peek().Equals("cse") && !tokens.Peek().Equals("concur"))
+                        {
+                            tokens.Dequeue();
+                        }
+                        break;
+                    default:
+                        // If we get a four digit number, add it to the prereq string
+                        if (frontToken.Length == 4 && int.TryParse(frontToken, out int num))
+                        {
+                            prereqs.Add(num);
+                        }
+                        break;
+                }
+
+                // Continue to parse
+                ParsePrereqs(tokens, prereqs);
+            }
+        }
+
+        /**
          * Parses prereqStr and returns a list of the CSE prerequisite courses. The returned list
-         * contains each 4-digit course number that isn't succeeded by 'Math', 'ECE', 'Engr', or 'Stat'.
+         * contains each 4-digit course number that isn't succeeded by 'Math', 'ECE', 'Engr', 'ISE', or 'Stat'.
          * 
          * @param prereqStr the string containing the detailed description of prerequisites to be parsed
          * @return a list of the parsed CSE prerequisite courses
          */
-        private static IList<int> ParsePrereqs(string prereqStr)
+        private static IList<int> LoadPrereqs(string prereqStr)
         {
-            // TODO - Implement this
-            return new List<int>();
+            IList<int> prereqs = new List<int>();
+
+            Queue<string> tokens = new Queue<string>(
+                prereqStr.ToLower().Split(" ,.:;\t\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+            );
+
+            ParsePrereqs(tokens, prereqs);
+
+            return prereqs;
         }
 
         /**
@@ -65,10 +112,18 @@ namespace CSE_Courses_Viewer
                         Number = number,
                         Name = name,
                         Syllabus = syllabus,
-                        Prereqs = ParsePrereqs(row.ChildNodes[9].InnerText)
+                        Prereqs = LoadPrereqs(row.ChildNodes[9].InnerText)
                     });
                 }
             }
+        }
+
+        /**
+         * Traverses the CourseList and adds any successor courses.
+         */
+        private static void LoadSuccessors()
+        {
+
         }
 
         /**
@@ -87,6 +142,7 @@ namespace CSE_Courses_Viewer
         {
             IEnumerable<HtmlNode> courseTags = ScrapeCourses();
             LoadCourses(courseTags);
+            LoadSuccessors();
         }
     }
 }
