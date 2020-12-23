@@ -39,10 +39,10 @@ namespace CSE_Courses_Viewer
             {
                 if (Prereqs.Count == 0) return "None";
 
-                string s = string.Format("CSE {0}", Prereqs[0].ToString());
+                string s = $"CSE {Prereqs[0]}";
                 for (int i = 1; i < Prereqs.Count; i++)
                 {
-                    s += string.Format(", CSE {0}", Prereqs[i]);
+                    s += $", CSE {Prereqs[i]}";
                 }
                 return s;
             }
@@ -60,10 +60,10 @@ namespace CSE_Courses_Viewer
             {
                 if (Successors.Count == 0) return "N/A";
 
-                string s = string.Format("CSE {0}", Successors[0].ToString());
+                string s = $"CSE {Successors[0]}";
                 for (int i = 1; i < Successors.Count; i++)
                 {
-                    s += string.Format(", CSE {0}", Successors[i]);
+                    s += $", CSE {Successors[i]}";
                 }
                 return s;
             }
@@ -143,7 +143,7 @@ namespace CSE_Courses_Viewer
 
         public override string ToString()
         {
-            return string.Format("({0}, {1}, {2})", Number, Name, Syllabus);
+            return $"({Number}, {Name}, {Syllabus})";
         }
 
         public override int GetHashCode()
