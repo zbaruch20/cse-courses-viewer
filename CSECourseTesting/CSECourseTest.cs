@@ -1,5 +1,5 @@
-﻿using HtmlAgilityPack;
-using Fizzler.Systems.HtmlAgilityPack;
+﻿using Fizzler.Systems.HtmlAgilityPack;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 

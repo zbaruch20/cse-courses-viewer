@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Fizzler.Systems.HtmlAgilityPack;
 using HtmlAgilityPack;
-using Fizzler.Systems.HtmlAgilityPack;
-using System.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace CSE_Courses_Viewer
 {
@@ -54,7 +52,7 @@ namespace CSE_Courses_Viewer
                         break;
                     default:
                         // If we get a four digit number, add it to the prereq string
-                        if (frontToken.Length == 4 && int.TryParse(frontToken, out int num))
+                        if (frontToken.Length == 4 && int.TryParse(frontToken, out int num) && !prereqs.Contains(num))
                         {
                             prereqs.Add(num);
                         }
@@ -77,10 +75,12 @@ namespace CSE_Courses_Viewer
         {
             IList<int> prereqs = new List<int>();
 
+            // Tokenize the scraped prereq string
             Queue<string> tokens = new Queue<string>(
                 prereqStr.ToLower().Split(" ,.:;\t\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
             );
 
+            // Use Recursive Descent Parsing to parse the tokens
             ParsePrereqs(tokens, prereqs);
 
             return prereqs;
@@ -107,6 +107,7 @@ namespace CSE_Courses_Viewer
                     string name = row.ChildNodes[5].InnerText;
                     string syllabus = BaseUri + row.ChildNodes[1].FirstChild.GetAttributeValue("href", "");
 
+                    // Add the course using the scraped HTML
                     CourseList.AddCourse(new CSECourse()
                     {
                         Number = number,
@@ -123,7 +124,22 @@ namespace CSE_Courses_Viewer
          */
         private static void LoadSuccessors()
         {
-
+            foreach (ICSECourse course in CourseList)
+            {
+                int number = course.Number;
+                foreach (int prq in course.Prereqs)
+                {
+                    // For each prereq in the list, add the current course as a successor
+                    // (if it is not already there)
+                    if (CourseList.ContainsNumber(prq)) {
+                        ICSECourse prereqCourse = CourseList.GetCourseByNumber(prq);
+                        if (!prereqCourse.Successors.Contains(number))
+                        {
+                            prereqCourse.AddSuccessor(number);
+                        }
+                    }
+                }
+            }
         }
 
         /**

@@ -1,11 +1,13 @@
-﻿namespace CSE_Courses_Viewer
+﻿using System.Collections.Generic;
+
+namespace CSE_Courses_Viewer
 {
     /**
      * Interface for a list of CSE Courses, sorted by course number.
      * 
      * @author Zach Baruch
      */
-    public interface ICSECourseList
+    public interface ICSECourseList : IEnumerable<ICSECourse>
     {
         /**
          * Returns the length of this.

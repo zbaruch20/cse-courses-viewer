@@ -9,7 +9,7 @@ namespace CSE_Courses_Viewer
      * 
      * @author Zach Baruch
      */
-    public class CSECourseList : ICSECourseList, IEnumerable<ICSECourse>
+    public class CSECourseList : ICSECourseList
     {
         #region Public members
 
